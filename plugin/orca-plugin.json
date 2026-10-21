@@ -1,0 +1,51 @@
+{
+  "manifestVersion": 1,
+  "id": "webhook-bridge",
+  "publisher": "rocketbase00",
+  "name": "Webhook Bridge",
+  "version": "0.1.0",
+  "description": "Stores selected agent.status.changed events in a local durable outbox. A separate Sender process delivers them to a private Hermes receiver over Tailscale.",
+  "author": {
+    "name": "Isao Koyama",
+    "url": "https://github.com/rocketbase00"
+  },
+  "repository": "https://github.com/rocketbase00/orca_webhook",
+  "engines": {
+    "orca": ">=1.4.232"
+  },
+  "pluginApi": 1,
+  "main": "main.mjs",
+  "contributes": {
+    "commands": [
+      {
+        "id": "webhook-bridge.status",
+        "title": "Webhook Bridge: Show Status"
+      },
+      {
+        "id": "webhook-bridge.stop",
+        "title": "Webhook Bridge: Stop Bridge (keep queue)"
+      },
+      {
+        "id": "webhook-bridge.resume",
+        "title": "Webhook Bridge: Resume Bridge"
+      },
+      {
+        "id": "webhook-bridge.test-event",
+        "title": "Webhook Bridge: Queue Test Event"
+      }
+    ],
+    "events": [
+      {
+        "on": "agent.status.changed"
+      }
+    ]
+  },
+  "capabilities": [
+    {
+      "kind": "events:subscribe"
+    },
+    {
+      "kind": "notifications:show"
+    }
+  ]
+}

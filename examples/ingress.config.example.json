@@ -1,0 +1,31 @@
+{
+  "ingressConfigVersion": 1,
+  "listen": { "host": "127.0.0.1", "port": 8645 },
+  "tls": null,
+  "dataDir": "/home/hermes/.local/share/orca-webhook-bridge-ingress",
+  "basePath": "/bridge/v1",
+  "allowedSourceCidrs": ["127.0.0.1/32", "::1/128", "100.64.0.0/10", "fd7a:115c:a1e0::/48"],
+  "maxBodyBytes": 65536,
+  "timestampToleranceSeconds": 300,
+  "keys": [
+    { "keyId": "bridge-key-01", "secretRef": "file:/home/hermes/.config/orca-webhook-bridge/bridge-key-01.txt", "enabled": true }
+  ],
+  "sources": [
+    { "deviceId": "macbook-air-01", "keyIds": ["bridge-key-01"], "epochs": ["<epoch printed by owb init / owb status>"] }
+  ],
+  "processing": {
+    "heartbeatStaleSeconds": 180,
+    "forward": {
+      "enabled": false,
+      "url": "http://127.0.0.1:8644/webhooks/orca-bridge",
+      "secretRef": "file:/home/hermes/.config/orca-webhook-bridge/hermes-route.txt",
+      "states": ["waiting", "done"],
+      "lifecycleReasons": ["collection_fault"],
+      "historicalAfterSeconds": 600,
+      "connectTimeoutSeconds": 3,
+      "requestTimeoutSeconds": 15,
+      "maxAttempts": 20
+    }
+  },
+  "retention": { "processedBodyDays": 90 }
+}
