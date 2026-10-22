@@ -1,0 +1,39 @@
+{
+  "name": "orca-webhook-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Durable, signed delivery of Orca agent status events to a private Hermes Agent receiver.",
+  "keywords": [
+    "orca",
+    "orca-plugin",
+    "hermes-agent",
+    "webhook",
+    "outbox",
+    "hmac",
+    "tailscale",
+    "claude-code",
+    "codex"
+  ],
+  "homepage": "https://github.com/rocketbase00/orca_webhook#readme",
+  "bugs": {
+    "url": "https://github.com/rocketbase00/orca_webhook/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rocketbase00/orca_webhook.git"
+  },
+  "license": "MIT",
+  "author": "Isao Koyama (https://github.com/rocketbase00)",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "owb": "bin/owb.mjs"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 \"test/**/*.test.mjs\"",
+    "sender": "node sender/main.mjs",
+    "ingress": "node ingress/main.mjs serve"
+  }
+}

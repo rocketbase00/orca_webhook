@@ -1,0 +1,75 @@
+{
+  "bridgeConfigVersion": 1,
+  "enabled": false,
+  "mode": "dry_run",
+  "source": {
+    "deviceId": "macbook-air-01"
+  },
+  "collector": {
+    "events": [
+      "agent.status.changed"
+    ],
+    "scope": {
+      "worktreeIds": [],
+      "paneKeys": [
+        "<paneKey from owb targets>"
+      ],
+      "includeUnscoped": false
+    },
+    "includeMainAgent": true,
+    "includeTranscript": false,
+    "unknownStatePolicy": "forward_as_unknown"
+  },
+  "sender": {
+    "runAs": "user_launch_agent",
+    "resumeCheckIntervalSeconds": 60,
+    "endpointId": "hermes-private-01",
+    "endpointUrl": "https://hermes-host.example-tailnet.ts.net/bridge/v1/events",
+    "allowedHosts": [
+      "hermes-host.example-tailnet.ts.net"
+    ],
+    "followRedirects": false,
+    "connectTimeoutSeconds": 3,
+    "requestTimeoutSeconds": 10,
+    "maxConcurrentRequests": 2,
+    "maxRequestsPerSecond": 10,
+    "responseContract": "bridge_v1",
+    "heartbeat": {
+      "enabled": true,
+      "intervalSeconds": 60
+    },
+    "signing": {
+      "scheme": "generic_hmac_v2",
+      "keyId": "bridge-key-01",
+      "secretRef": "keychain:orca-webhook-bridge/hermes-private-01"
+    },
+    "retry": {
+      "initialDelaySeconds": 5,
+      "maxDelaySeconds": 900,
+      "jitter": true,
+      "maxEventAgeDays": 30
+    }
+  },
+  "queue": {
+    "engine": "sqlite",
+    "directoryRef": "user_application_support/OrcaWebhookBridge",
+    "maxUndeliveredEvents": 100000,
+    "maxDiskBytes": 268435456,
+    "minFreeDiskBytes": 268435456,
+    "maxPayloadBytes": 16384,
+    "deliveredRetentionDays": 7,
+    "attemptLogRetentionDays": 30,
+    "overflowPolicy": "stop_collection_and_alert"
+  },
+  "context": {
+    "providerByPaneKey": {},
+    "linearIssueByStreamId": {}
+  },
+  "actions": {
+    "enabled": false,
+    "requireExplicitApproval": true,
+    "approvalTtlSeconds": 900,
+    "offlinePolicy": "defer_and_revalidate",
+    "allowedActionTypes": []
+  }
+}
