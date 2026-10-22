@@ -109,7 +109,7 @@ node ingress/main.mjs serve          # 127.0.0.1:8645 で待ち受け（systemd 
 
 - 既定では `127.0.0.1` で待ち受けます。Tailnet から HTTPS で受けるには、`tailscale serve`（または別のリバースプロキシ）で `http://127.0.0.1:8645` へ中継するか、`tls.certFile` / `tls.keyFile` を設定して Tailscale のアドレスに bind してください。`0.0.0.0` への bind は `allowWildcardBind: true` を明示しない限り拒否します。
 - 接続元アドレスは `allowedSourceCidrs` で制限します。既定ではループバックと Tailscale の範囲を許可します。
-- Hermes に渡す場合は `processing.forward` を有効にし、[`examples/hermes-route.example.yaml`](examples/hermes-route.example.yaml) を参考に Webhook ルートを作ります。転送されるのは、選んだ状態（既定 `waiting` と `done`）の最新の観測と収集障害だけです。各イベントには `historical`（既定で観測から600秒超）と欠番のフラグが付きます。鍵は Mac → Ingress とは別のものを使ってください。
+- Hermes に渡す場合は `processing.forward` を有効にし、[`examples/hermes-route.example.yaml`](examples/hermes-route.example.yaml) を参考に Webhook ルートを作ります。転送されるのは、選んだ状態（既定 `waiting` と `done`）の最新の観測と収集障害だけで、状態は変わったときだけ転送します。Orca は同じ状態を繰り返し発行することがあります（数分後にもう一度 `done` など）が、その繰り返しは保存だけして転送しません。各イベントには `historical`（既定で観測から600秒超）と欠番のフラグが付きます。鍵は Mac → Ingress とは別のものを使ってください。
 - `node ingress/main.mjs status` で送信元・ストリーム・Inbox を確認できます。到達性はハートビートをもとに `up` か `unknown` で表示し、欠落を「スリープ中」とは表示しません。
 
 ## 運用
@@ -173,7 +173,7 @@ Sender のログは `~/Library/Application Support/OrcaWebhookBridge/logs/sender
 npm test   # node:test を使用。依存なし
 ```
 
-テストは47件です。[`test/orca-runtime.test.mjs`](test/orca-runtime.test.mjs) は、インストール済みの `Orca.app` に同梱されたプラグインワーカー実行環境に `plugin/` を読み込みます。そのうえで Orca と同じホスト↔ワーカーのプロトコルで、イベント配信・コマンド実行・シャットダウンを行います。Orca がインストールされていない場合はスキップします。
+テストは48件です。[`test/orca-runtime.test.mjs`](test/orca-runtime.test.mjs) は、インストール済みの `Orca.app` に同梱されたプラグインワーカー実行環境に `plugin/` を読み込みます。そのうえで Orca と同じホスト↔ワーカーのプロトコルで、イベント配信・コマンド実行・シャットダウンを行います。Orca がインストールされていない場合はスキップします。
 
 | 受け入れ基準（仕様 §20） | 状態 |
 | --- | --- |
