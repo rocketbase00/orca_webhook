@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Bridge Ingress no longer forwards a re-emitted unchanged state to Hermes.
+  Orca can report the same state repeatedly (for example `done` again minutes
+  later), which made Hermes run once per repeat. Only a state transition, or a
+  state whose previous value is unknown, is forwarded now; repeats are still
+  stored and projected.
+
 ## [0.1.0] - 2026-10-21
 
 First public release. Implements Phase 1–2 of the [specification](docs/spec.md)
@@ -22,4 +32,5 @@ First public release. Implements Phase 1–2 of the [specification](docs/spec.md
   webhook route.
 - `owb` admin CLI.
 
+[Unreleased]: https://github.com/rocketbase00/orca_webhook/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/rocketbase00/orca_webhook/releases/tag/v0.1.0

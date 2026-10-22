@@ -358,6 +358,9 @@ export function createIngress({ config, now = () => Date.now(), resolveSecret = 
     if (!forward.enabled) return null
     if (envelope.event_type === 'agent.status.changed') {
       if (projection.stale || !forward.states.includes(envelope.data.normalized_state)) return null
+      // Orca re-emits an unchanged state (e.g. `done` again minutes later); only a transition wakes Hermes.
+      // An unknown previous state (first event, collection gap) is forwarded so nothing is missed.
+      if (envelope.data.previous_state === envelope.data.state) return null
     } else if (!forward.lifecycleReasons.includes(envelope.data.reason)) {
       return null
     }

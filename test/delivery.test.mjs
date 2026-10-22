@@ -339,6 +339,27 @@ test('ingress restart mid-processing resumes from the inbox without re-forwardin
   assert.equal(stack.hermesRequests.length, 2, 'completed side effects are not reissued')
 })
 
+test('only state transitions are forwarded; a re-emitted unchanged state is stored but not forwarded', async (t) => {
+  const clock = createClock()
+  const stack = await startStack(t, { clock, forward: true })
+  const { config, outbox, sender } = setupSender(t, { clock, url: stack.url })
+  const states = ['working', 'done', 'done', 'waiting', 'waiting', 'done']
+  states.forEach((state, i) => record(outbox, config, { state, receivedAt: i + 1 }, clock.now()))
+  await pump(sender, 10, clock)
+  await stack.ingress.processPending()
+  const inbox = stack.ingress.db.prepare("SELECT status FROM inbox WHERE event_type = 'agent.status.changed'").all()
+  assert.equal(inbox.length, states.length)
+  assert.ok(inbox.every((row) => row.status === 'processed'))
+  assert.deepEqual(
+    stack.hermesRequests.map((r) => [r.body.previous_state, r.body.state]),
+    [
+      ['working', 'done'],
+      ['done', 'waiting'],
+      ['waiting', 'done']
+    ]
+  )
+})
+
 test('dry run exercises URL and signing but never sends', async (t) => {
   const clock = createClock()
   let calls = 0

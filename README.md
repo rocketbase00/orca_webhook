@@ -109,7 +109,7 @@ node ingress/main.mjs serve          # listens on 127.0.0.1:8645; run it under s
 
 - The Ingress binds to `127.0.0.1` by default. To receive over HTTPS on your Tailnet, put `tailscale serve` (or another reverse proxy) in front of `http://127.0.0.1:8645`, or set `tls.certFile` / `tls.keyFile` and bind the Tailscale address. Binding `0.0.0.0` is refused unless you set `allowWildcardBind: true`.
 - `allowedSourceCidrs` restricts client addresses. By default it allows loopback and the Tailscale ranges.
-- To involve Hermes, enable `processing.forward` and create a webhook route based on [`examples/hermes-route.example.yaml`](examples/hermes-route.example.yaml). Only the latest observation of the selected states (default `waiting` and `done`) and collection faults are forwarded. Each forwarded event is marked with `historical` (observed more than 600 s ago by default) and with gap flags. Use a different key from the Mac → Ingress key.
+- To involve Hermes, enable `processing.forward` and create a webhook route based on [`examples/hermes-route.example.yaml`](examples/hermes-route.example.yaml). Only the latest observation of the selected states (default `waiting` and `done`) and collection faults are forwarded, and a state is forwarded only when it changes: Orca re-emits an unchanged state (for example `done` again minutes later), and those repeats are stored but not forwarded. Each forwarded event is marked with `historical` (observed more than 600 s ago by default) and with gap flags. Use a different key from the Mac → Ingress key.
 - `node ingress/main.mjs status` shows sources, streams and the inbox. Reachability is `up` or `unknown`, based on heartbeats. A missing heartbeat is never reported as "asleep".
 
 ## Operations
@@ -173,7 +173,7 @@ By default the bridge sends only states and identifiers (spec §18).
 npm test   # node:test, no dependencies
 ```
 
-The suite has 47 tests. [`test/orca-runtime.test.mjs`](test/orca-runtime.test.mjs) loads `plugin/` into the plugin worker runtime bundled in a locally installed `Orca.app`. It drives that runtime with Orca's host↔worker protocol: event delivery, a command and shutdown. It skips itself when Orca is not installed.
+The suite has 48 tests. [`test/orca-runtime.test.mjs`](test/orca-runtime.test.mjs) loads `plugin/` into the plugin worker runtime bundled in a locally installed `Orca.app`. It drives that runtime with Orca's host↔worker protocol: event delivery, a command and shutdown. It skips itself when Orca is not installed.
 
 | Acceptance criteria (spec §20) | Status |
 | --- | --- |
